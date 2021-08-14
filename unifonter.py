@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+# Copyright 2021 John Lenton
+# Licensed under GPLv3, see LICENSE file for details.
 
 import argparse
 import itertools
@@ -6,7 +7,10 @@ import re
 import sys
 import unicodedata
 
-_KINDS = {
+__all__ = ("unifonter", "KINDS")
+__version__ = "0.0.1"
+
+KINDS = {
     "b": "BOLD",
     "i": "ITALIC",
     "bi": "BOLD ITALIC",
@@ -22,18 +26,6 @@ _KINDS = {
     "k": "SMALL-CAPS",
     "m": "MONOSPACE",
     "w": "FULLWIDTH",
-}
-
-_STYLES = {
-    "b": "bold",
-    "c": "script",
-    "d": "double-struck",
-    "f": "fraktur",
-    "i": "italic",
-    "k": "small-caps",
-    "m": "monospace",
-    "s": "sans-serif",
-    "w": "fullwidth",
 }
 
 _EXCEPTIONS = {
@@ -65,7 +57,17 @@ _EXCEPTIONS = {
     #    "LATIN LETTER SMALL CAPITAL Q": "LATIN SMALL LETTER O WITH OGONEK",
 }
 
-rx = re.compile(r"^LATIN (\S+) LETTER (\S+)$")
+def _gen_k_help(dump=True):
+    styles = []
+    for (k, v) in sorted(KINDS.items()):
+        if len(k) == 1:
+            styles.append("%s (%s)" % (k, unifonter(v.title(), KINDS[k])))
+    out = ", ".join(styles)
+    if dump:
+        print(repr(out))
+    return out
+
+_rx = re.compile(r"^LATIN (\S+) LETTER (\S+)$")
 
 
 def unifonter(arg, kind):
@@ -86,7 +88,7 @@ def unifonter(arg, kind):
                     if name.startswith("DIGIT "):
                         name = nrepl + name
                     else:
-                        name = rx.sub(lrepl, name)
+                        name = _rx.sub(lrepl, name)
                 if name in _EXCEPTIONS:
                     name = _EXCEPTIONS[name]
                 s.append(unicodedata.lookup(name))
@@ -94,18 +96,18 @@ def unifonter(arg, kind):
                 s.append(l)
     return "".join(s)
 
-
 def demo(text):
     if len(text) == 0:
         print(" USE  TO GET")
-        for k in _KINDS:
-            print(" %3s  %s" % (k, unifonter(_KINDS[k].title(), _KINDS[k])))
+        for k in KINDS:
+            print(" %3s  %s" % (k, unifonter(KINDS[k].title(), KINDS[k])))
     else:
-        for k in _KINDS:
-            print(unifonter(" ".join(text), _KINDS[k]))
+        for k in KINDS:
+            print(unifonter(" ".join(text), KINDS[k]))
 
+_k_help = 'b (𝐁𝐨𝐥𝐝), c (𝒮𝒸𝓇𝒾𝓅𝓉), d (𝔻𝕠𝕦𝕓𝕝𝕖-𝕊𝕥𝕣𝕦𝕔𝕜), f (𝔉𝔯𝔞𝔨𝔱𝔲𝔯), i (𝐼𝑡𝑎𝑙𝑖𝑐), k (Sᴍᴀʟʟ-Cᴀᴘꜱ), m (𝙼𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎), s (𝖲𝖺𝗇𝗌-𝖲𝖾𝗋𝗂𝖿), w (Ｆｕｌｌｗｉｄｔｈ)'
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description="%(prog)s is a filter that tries to make ASCII fancy with the help of Unicode.",
         epilog="""For starters just run
@@ -136,10 +138,7 @@ and then perhaps
     )
     parser.add_argument(
         "-k",
-        help="font style to use; one or more of of "
-        + ", ".join(
-            "%s (%s)" % (k, unifonter(v, _KINDS[k])) for (k, v) in _STYLES.items()
-        )
+        help="font style to use; one or more of of " + _k_help
         + " (default: random; not all combinations will work; see -d)",
         dest="kind",
     )
@@ -159,21 +158,22 @@ and then perhaps
         import random
 
         random.seed()
-        kind = random.choice(list(_KINDS.values()))
+        kind = random.choice(list(KINDS.values()))
     else:
         kind = args.kind
         if len(kind) > 1:
             kind = "".join(sorted(kind))
-        if kind not in _KINDS:
+        if kind not in KINDS:
             parser.error("unknown kind {!r}".format(args.kind))
         else:
-            kind = _KINDS[kind]
+            kind = KINDS[kind]
 
     if len(args.text) == 0:
         if args.input is not None:
             it = args.input
         else:
-            print("reading from stdin", file=sys.stderr)
+            if sys.stdin.isatty():
+                print("reading from stdin", file=sys.stderr)
             it = sys.stdin
     else:
         it = " ".join(args.text) + "\n"
@@ -185,3 +185,6 @@ and then perhaps
             print(unifonter(arg, kind), file=args.output, end="")
     except BrokenPipeError:
         pass
+
+if __name__ == "__main__":
+    main()

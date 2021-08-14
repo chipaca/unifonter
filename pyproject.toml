@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "unifonter"
+version = "0.0.1"
+description = "A filter that tries to make ASCII fancy with the help of Unicode"
+authors = ["John R. Lenton <jlenton@gmail.com>"]
+license = "GPL-3.0-or-later"
+readme = "README.md"
+repository = "https://github.com/chipaca/unifonter"
+classifiers = [
+        "Operating System :: OS Independent",
+        "Topic :: Text Processing :: Filters",
+]
+
+[tool.poetry.scripts]
+unifonter = 'unifonter:main'
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+[tool.poetry.dev-dependencies]
+tox = "^3.24.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
