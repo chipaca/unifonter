@@ -54,8 +54,12 @@ _EXCEPTIONS = {
     "MATHEMATICAL DOUBLE-STRUCK CAPITAL R": "DOUBLE-STRUCK CAPITAL R",
     "MATHEMATICAL DOUBLE-STRUCK CAPITAL Z": "DOUBLE-STRUCK CAPITAL Z",
     "MATHEMATICAL ITALIC SMALL H": "PLANCK CONSTANT",
-    #    "LATIN LETTER SMALL CAPITAL Q": "LATIN SMALL LETTER O WITH OGONEK",
 }
+
+if int(unicodedata.unidata_version[:unicodedata.unidata_version.index('.')]) < 11:
+    # this one's only there since unicode 11 🤷
+    _EXCEPTIONS["LATIN LETTER SMALL CAPITAL Q"] = "LATIN SMALL LETTER O WITH OGONEK"
+
 
 def _gen_k_help(dump=True):
     styles = []
