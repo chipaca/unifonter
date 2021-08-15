@@ -1,6 +1,6 @@
 import unittest
 
-from unifonter import KINDS, unifonter, _gen_k_help, _k_help
+from unifonter import KINDS, unifonter, _EXCEPTIONS, _gen_k_help, _k_help
 
 printable = "0123456789 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -22,6 +22,9 @@ ascii = {
     # NOTE the fullwidth spaces here
     "FULLWIDTH": "０１２３４５６７８９\u3000ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ\u3000ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ",
 }
+
+if "LATIN LETTER SMALL CAPITAL Q" in _EXCEPTIONS:
+    ascii["SMALL-CAPS"] = ascii["SMALL-CAPS"].replace("ꞯ", "ǫ")
 
 class TestUnifonter(unittest.TestCase):
     def test_ascii(self):
