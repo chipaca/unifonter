@@ -1,6 +1,6 @@
 import unittest
 
-from unifonter import KINDS, unifonter, _gen_k_help, _k_help
+from unifonter import KINDS, unifonter, _EXCEPTIONS, _gen_k_help, _k_help
 
 printable = "0123456789 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
