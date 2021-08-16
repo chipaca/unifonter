@@ -20,7 +20,7 @@ jobs:
       run: |
         python3 -m unittest
     - name: black check
-      if: matrix.python-version == "3.8"
+      if: matrix.python-version == '3.8'
       run: |
         pip install black
         black --check .
