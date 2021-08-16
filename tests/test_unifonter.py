@@ -26,6 +26,7 @@ ascii = {
 if "LATIN LETTER SMALL CAPITAL Q" in _EXCEPTIONS:
     ascii["SMALL-CAPS"] = ascii["SMALL-CAPS"].replace("ꞯ", "ǫ")
 
+
 class TestUnifonter(unittest.TestCase):
     def test_ascii(self):
         for kind, expected in ascii.items():

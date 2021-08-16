@@ -29,36 +29,38 @@ KINDS = {
 }
 
 _EXCEPTIONS = {
-    "FULLWIDTH SPACE": "IDEOGRAPHIC SPACE",
-    "MATHEMATICAL SCRIPT SMALL E": "SCRIPT SMALL E",
-    "MATHEMATICAL SCRIPT SMALL O": "SCRIPT SMALL O",
-    "MATHEMATICAL SCRIPT SMALL G": "SCRIPT SMALL G",
-    "MATHEMATICAL SCRIPT CAPITAL B": "SCRIPT CAPITAL B",
-    "MATHEMATICAL SCRIPT CAPITAL E": "SCRIPT CAPITAL E",
-    "MATHEMATICAL SCRIPT CAPITAL F": "SCRIPT CAPITAL F",
-    "MATHEMATICAL SCRIPT CAPITAL H": "SCRIPT CAPITAL H",
-    "MATHEMATICAL SCRIPT CAPITAL I": "SCRIPT CAPITAL I",
-    "MATHEMATICAL SCRIPT CAPITAL L": "SCRIPT CAPITAL L",
-    "MATHEMATICAL SCRIPT CAPITAL M": "SCRIPT CAPITAL M",
-    "MATHEMATICAL SCRIPT CAPITAL R": "SCRIPT CAPITAL R",
-    "MATHEMATICAL FRAKTUR CAPITAL C": "BLACK-LETTER CAPITAL C",
-    "MATHEMATICAL FRAKTUR CAPITAL H": "BLACK-LETTER CAPITAL H",
-    "MATHEMATICAL FRAKTUR CAPITAL I": "BLACK-LETTER CAPITAL I",
-    "MATHEMATICAL FRAKTUR CAPITAL R": "BLACK-LETTER CAPITAL R",
-    "MATHEMATICAL FRAKTUR CAPITAL Z": "BLACK-LETTER CAPITAL Z",
-    "MATHEMATICAL DOUBLE-STRUCK CAPITAL C": "DOUBLE-STRUCK CAPITAL C",
-    "MATHEMATICAL DOUBLE-STRUCK CAPITAL H": "DOUBLE-STRUCK CAPITAL H",
-    "MATHEMATICAL DOUBLE-STRUCK CAPITAL N": "DOUBLE-STRUCK CAPITAL N",
-    "MATHEMATICAL DOUBLE-STRUCK CAPITAL P": "DOUBLE-STRUCK CAPITAL P",
-    "MATHEMATICAL DOUBLE-STRUCK CAPITAL Q": "DOUBLE-STRUCK CAPITAL Q",
-    "MATHEMATICAL DOUBLE-STRUCK CAPITAL R": "DOUBLE-STRUCK CAPITAL R",
-    "MATHEMATICAL DOUBLE-STRUCK CAPITAL Z": "DOUBLE-STRUCK CAPITAL Z",
-    "MATHEMATICAL ITALIC SMALL H": "PLANCK CONSTANT",
+    "FULLWIDTH SPACE": "\u3000",  # IDEOGRAPHIC SPACE
+    "MATHEMATICAL SCRIPT SMALL E": "ℯ",  # SCRIPT SMALL E
+    "MATHEMATICAL SCRIPT SMALL O": "ℴ",  # SCRIPT SMALL O
+    "MATHEMATICAL SCRIPT SMALL G": "ℊ",  # SCRIPT SMALL G
+    "MATHEMATICAL SCRIPT CAPITAL B": "ℬ",  # SCRIPT CAPITAL B
+    "MATHEMATICAL SCRIPT CAPITAL E": "ℰ",  # SCRIPT CAPITAL E
+    "MATHEMATICAL SCRIPT CAPITAL F": "ℱ",  # SCRIPT CAPITAL F
+    "MATHEMATICAL SCRIPT CAPITAL H": "ℋ",  # SCRIPT CAPITAL H
+    "MATHEMATICAL SCRIPT CAPITAL I": "ℐ",  # SCRIPT CAPITAL I
+    "MATHEMATICAL SCRIPT CAPITAL L": "ℒ",  # SCRIPT CAPITAL L
+    "MATHEMATICAL SCRIPT CAPITAL M": "ℳ",  # SCRIPT CAPITAL M
+    "MATHEMATICAL SCRIPT CAPITAL R": "ℛ",  # SCRIPT CAPITAL R
+    "MATHEMATICAL FRAKTUR CAPITAL C": "ℭ",  # BLACK-LETTER CAPITAL C
+    "MATHEMATICAL FRAKTUR CAPITAL H": "ℌ",  # BLACK-LETTER CAPITAL H
+    "MATHEMATICAL FRAKTUR CAPITAL I": "ℑ",  # BLACK-LETTER CAPITAL I
+    "MATHEMATICAL FRAKTUR CAPITAL R": "ℜ",  # BLACK-LETTER CAPITAL R
+    "MATHEMATICAL FRAKTUR CAPITAL Z": "ℨ",  # BLACK-LETTER CAPITAL Z
+    "MATHEMATICAL DOUBLE-STRUCK CAPITAL C": "ℂ",  # DOUBLE-STRUCK CAPITAL C
+    "MATHEMATICAL DOUBLE-STRUCK CAPITAL H": "ℍ",  # DOUBLE-STRUCK CAPITAL H
+    "MATHEMATICAL DOUBLE-STRUCK CAPITAL N": "ℕ",  # DOUBLE-STRUCK CAPITAL N
+    "MATHEMATICAL DOUBLE-STRUCK CAPITAL P": "ℙ",  # DOUBLE-STRUCK CAPITAL P
+    "MATHEMATICAL DOUBLE-STRUCK CAPITAL Q": "ℚ",  # DOUBLE-STRUCK CAPITAL Q
+    "MATHEMATICAL DOUBLE-STRUCK CAPITAL R": "ℝ",  # DOUBLE-STRUCK CAPITAL R
+    "MATHEMATICAL DOUBLE-STRUCK CAPITAL Z": "ℤ",  # DOUBLE-STRUCK CAPITAL Z
+    "MATHEMATICAL ITALIC SMALL H": "ℎ",  # PLANCK CONSTANT
 }
 
-if int(unicodedata.unidata_version[:unicodedata.unidata_version.index('.')]) < 11:
+if int(unicodedata.unidata_version[: unicodedata.unidata_version.index(".")]) < 11:
     # this one's only there since unicode 11 🤷
-    _EXCEPTIONS["LATIN LETTER SMALL CAPITAL Q"] = "LATIN SMALL LETTER O WITH OGONEK"
+    _EXCEPTIONS[
+        "LATIN LETTER SMALL CAPITAL Q"
+    ] = "ǫ"  # LATIN SMALL LETTER O WITH OGONEK
 
 
 def _gen_k_help(dump=True):
@@ -70,6 +72,7 @@ def _gen_k_help(dump=True):
     if dump:
         print(repr(out))
     return out
+
 
 _rx = re.compile(r"^LATIN (\S+) LETTER (\S+)$")
 
@@ -94,11 +97,13 @@ def unifonter(arg, kind):
                     else:
                         name = _rx.sub(lrepl, name)
                 if name in _EXCEPTIONS:
-                    name = _EXCEPTIONS[name]
-                s.append(unicodedata.lookup(name))
+                    s.append(_EXCEPTIONS[name])
+                else:
+                    s.append(unicodedata.lookup(name))
             except (ValueError, KeyError):
                 s.append(l)
     return "".join(s)
+
 
 def demo(text):
     if len(text) == 0:
@@ -109,7 +114,9 @@ def demo(text):
         for k in KINDS:
             print(unifonter(" ".join(text), KINDS[k]))
 
-_k_help = 'b (𝐁𝐨𝐥𝐝), c (𝒮𝒸𝓇𝒾𝓅𝓉), d (𝔻𝕠𝕦𝕓𝕝𝕖-𝕊𝕥𝕣𝕦𝕔𝕜), f (𝔉𝔯𝔞𝔨𝔱𝔲𝔯), i (𝐼𝑡𝑎𝑙𝑖𝑐), k (Sᴍᴀʟʟ-Cᴀᴘꜱ), m (𝙼𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎), s (𝖲𝖺𝗇𝗌-𝖲𝖾𝗋𝗂𝖿), w (Ｆｕｌｌｗｉｄｔｈ)'
+
+_k_help = "b (𝐁𝐨𝐥𝐝), c (𝒮𝒸𝓇𝒾𝓅𝓉), d (𝔻𝕠𝕦𝕓𝕝𝕖-𝕊𝕥𝕣𝕦𝕔𝕜), f (𝔉𝔯𝔞𝔨𝔱𝔲𝔯), i (𝐼𝑡𝑎𝑙𝑖𝑐), k (Sᴍᴀʟʟ-Cᴀᴘꜱ), m (𝙼𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎), s (𝖲𝖺𝗇𝗌-𝖲𝖾𝗋𝗂𝖿), w (Ｆｕｌｌｗｉｄｔｈ)"
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -142,7 +149,8 @@ and then perhaps
     )
     parser.add_argument(
         "-k",
-        help="font style to use; one or more of of " + _k_help
+        help="font style to use; one or more of of "
+        + _k_help
         + " (default: random; not all combinations will work; see -d)",
         dest="kind",
     )
@@ -189,6 +197,7 @@ and then perhaps
             print(unifonter(arg, kind), file=args.output, end="")
     except BrokenPipeError:
         pass
+
 
 if __name__ == "__main__":
     main()
