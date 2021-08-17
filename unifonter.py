@@ -106,13 +106,13 @@ def unifonter(arg, kind):
 
 
 def demo(text):
+    print(" USE  TO GET")
     if len(text) == 0:
-        print(" USE  TO GET")
         for k in KINDS:
             print(" %3s  %s" % (k, unifonter(KINDS[k].title(), KINDS[k])))
     else:
         for k in KINDS:
-            print(unifonter(" ".join(text), KINDS[k]))
+            print(" %3s  %s" % (k, unifonter(" ".join(text), KINDS[k])))
 
 
 _k_help = "b (𝐁𝐨𝐥𝐝), c (𝒮𝒸𝓇𝒾𝓅𝓉), d (𝔻𝕠𝕦𝕓𝕝𝕖-𝕊𝕥𝕣𝕦𝕔𝕜), f (𝔉𝔯𝔞𝔨𝔱𝔲𝔯), i (𝐼𝑡𝑎𝑙𝑖𝑐), k (Sᴍᴀʟʟ-Cᴀᴘꜱ), m (𝙼𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎), s (𝖲𝖺𝗇𝗌-𝖲𝖾𝗋𝗂𝖿), w (Ｆｕｌｌｗｉｄｔｈ)"
