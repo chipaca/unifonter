@@ -165,7 +165,10 @@ and then perhaps
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
-        "-i", type=argparse.FileType("r"), help="read from this file after the positional arguments", dest="input",
+        "-i",
+        type=argparse.FileType("r"),
+        help="read from this file after the positional arguments",
+        dest="input",
     )
     parser.add_argument(
         "-o",
@@ -188,7 +191,9 @@ and then perhaps
         dest="kind",
     )
     parser.add_argument(
-        "text", nargs="*", help="the text to transform. If not given, default -i to stdin",
+        "text",
+        nargs="*",
+        help="the text to transform. If not given, default -i to stdin",
     )
     args = parser.parse_args()
     if args.demo:
