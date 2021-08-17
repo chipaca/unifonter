@@ -23,4 +23,9 @@ jobs:
       if: matrix.python-version == '3.8'
       run: |
         pip install black
-        black --check .
+        black --line-length 120 --check --diff .
+    - name: flake8 check
+      if: matrix.python-version == '3.8'
+      run: |
+        pip install flake8
+        flake8 --max-line-length 120 --exclude .git,build,dist,env .
