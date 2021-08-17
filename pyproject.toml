@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "unifonter"
-version = "0.0.1"
+version = "0.5.0"
 description = "A filter that tries to make ASCII fancy with the help of Unicode"
 authors = ["John R. Lenton <jlenton@gmail.com>"]
 license = "GPL-3.0-or-later"

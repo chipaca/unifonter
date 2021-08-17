@@ -1,3 +1,4 @@
+#!/usr/bin/python3 -SIB
 # Copyright 2021 John Lenton
 # Licensed under GPLv3, see LICENSE file for details.
 
@@ -191,11 +192,20 @@ and then perhaps
         dest="kind",
     )
     parser.add_argument(
+        "-v",
+        help="print version and exit.",
+        dest="version",
+        action="store_true",
+    )
+    parser.add_argument(
         "text",
         nargs="*",
         help="the text to transform. If not given, default -i to stdin",
     )
     args = parser.parse_args()
+    if args.version:
+        print(__version__)
+        sys.exit(0)
     if args.demo:
         if args.input is not None:
             parser.error("currently demo mode only supports arguments, not -i")
