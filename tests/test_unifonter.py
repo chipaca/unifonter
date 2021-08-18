@@ -1,7 +1,18 @@
 import io
+from itertools import chain
+from random import shuffle
 import unittest
 
-from unifonter import unifonter, _gen_k_help, _k_help, _unidata_version, demo
+from unifonter import (
+    ALIASES,
+    KINDS,
+    LONG_KINDS,
+    _extra_kind_help,
+    _unidata_version,
+    demo,
+    parse_kind,
+    unifonter,
+)
 
 from_ascii = "0123456789 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -53,55 +64,127 @@ class TestUnifonter(unittest.TestCase):
     def test_decomposition(self):
         self.assertEqual(unifonter("árbol", "d"), "𝕒́𝕣𝕓𝕠𝕝")
 
-    def test_k_help(self):
-        self.assertEqual(_k_help, _gen_k_help(False))
-
     def test_demo_no_arg(self):
         f = io.StringIO()
         demo("", f)
         self.assertEqual(
             f.getvalue(),
             """\
- USE  TO GET
-   b  𝐁𝐨𝐥𝐝
-   i  𝐼𝑡𝑎𝑙𝑖𝑐
-  bi  𝑩𝒐𝒍𝒅 𝑰𝒕𝒂𝒍𝒊𝒄
-   s  𝖲𝖺𝗇𝗌-𝖲𝖾𝗋𝗂𝖿
-  bs  𝗦𝗮𝗻𝘀-𝗦𝗲𝗿𝗶𝗳 𝗕𝗼𝗹𝗱
-  is  𝘚𝘢𝘯𝘴-𝘚𝘦𝘳𝘪𝘧 𝘐𝘵𝘢𝘭𝘪𝘤
- bis  𝙎𝙖𝙣𝙨-𝙎𝙚𝙧𝙞𝙛 𝘽𝙤𝙡𝙙 𝙄𝙩𝙖𝙡𝙞𝙘
-   c  𝒮𝒸𝓇𝒾𝓅𝓉
-  bc  𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽
-   d  𝔻𝕠𝕦𝕓𝕝𝕖-𝕊𝕥𝕣𝕦𝕔𝕜
-   f  𝔉𝔯𝔞𝔨𝔱𝔲𝔯
-  bf  𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗
-   k  Sᴍᴀʟʟ-Cᴀᴘꜱ
-   m  𝙼𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎
-   w  Ｆｕｌｌｗｉｄｔｈ
-""",
+  USE               OR   TO GET
+  bold              b    𝐁𝐨𝐥𝐝
+  italic            i    𝐼𝑡𝑎𝑙𝑖𝑐
+  bold italic       bi   𝑩𝒐𝒍𝒅 𝑰𝒕𝒂𝒍𝒊𝒄
+  sans              s    𝖲𝖺𝗇𝗌-𝖲𝖾𝗋𝗂𝖿
+  bold sans         bs   𝗦𝗮𝗻𝘀-𝗦𝗲𝗿𝗶𝗳 𝗕𝗼𝗹𝗱
+  italic sans       is   𝘚𝘢𝘯𝘴-𝘚𝘦𝘳𝘪𝘧 𝘐𝘵𝘢𝘭𝘪𝘤
+  bold italic sans  bis  𝙎𝙖𝙣𝙨-𝙎𝙚𝙧𝙞𝙛 𝘽𝙤𝙡𝙙 𝙄𝙩𝙖𝙡𝙞𝙘
+  script            c    𝒮𝒸𝓇𝒾𝓅𝓉
+  bold script       bc   𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽
+  double-struck     d    𝔻𝕠𝕦𝕓𝕝𝕖-𝕊𝕥𝕣𝕦𝕔𝕜
+  fraktur           f    𝔉𝔯𝔞𝔨𝔱𝔲𝔯
+  bold fraktur      bf   𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗
+  small-caps        k    Sᴍᴀʟʟ-Cᴀᴘꜱ
+  mono              m    𝙼𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎
+  wide              w    Ｆｕｌｌｗｉｄｔｈ
+"""
+            + _extra_kind_help,
         )
 
     def test_demo_w_arg(self):
         f = io.StringIO()
-        demo("hello", f)
+        demo("Hello", f)
         self.assertEqual(
             f.getvalue(),
             """\
- USE  TO GET
-   b  𝐡 𝐞 𝐥 𝐥 𝐨
-   i  ℎ 𝑒 𝑙 𝑙 𝑜
-  bi  𝒉 𝒆 𝒍 𝒍 𝒐
-   s  𝗁 𝖾 𝗅 𝗅 𝗈
-  bs  𝗵 𝗲 𝗹 𝗹 𝗼
-  is  𝘩 𝘦 𝘭 𝘭 𝘰
- bis  𝙝 𝙚 𝙡 𝙡 𝙤
-   c  𝒽 ℯ 𝓁 𝓁 ℴ
-  bc  𝓱 𝓮 𝓵 𝓵 𝓸
-   d  𝕙 𝕖 𝕝 𝕝 𝕠
-   f  𝔥 𝔢 𝔩 𝔩 𝔬
-  bf  𝖍 𝖊 𝖑 𝖑 𝖔
-   k  ʜ ᴇ ʟ ʟ ᴏ
-   m  𝚑 𝚎 𝚕 𝚕 𝚘
-   w  ｈ　ｅ　ｌ　ｌ　ｏ
-""",
+  USE               OR   TO GET
+  bold              b    𝐇𝐞𝐥𝐥𝐨
+  italic            i    𝐻𝑒𝑙𝑙𝑜
+  bold italic       bi   𝑯𝒆𝒍𝒍𝒐
+  sans              s    𝖧𝖾𝗅𝗅𝗈
+  bold sans         bs   𝗛𝗲𝗹𝗹𝗼
+  italic sans       is   𝘏𝘦𝘭𝘭𝘰
+  bold italic sans  bis  𝙃𝙚𝙡𝙡𝙤
+  script            c    ℋℯ𝓁𝓁ℴ
+  bold script       bc   𝓗𝓮𝓵𝓵𝓸
+  double-struck     d    ℍ𝕖𝕝𝕝𝕠
+  fraktur           f    ℌ𝔢𝔩𝔩𝔬
+  bold fraktur      bf   𝕳𝖊𝖑𝖑𝖔
+  small-caps        k    Hᴇʟʟᴏ
+  mono              m    𝙷𝚎𝚕𝚕𝚘
+  wide              w    Ｈｅｌｌｏ
+"""
+            + _extra_kind_help,
         )
+
+    def test_kinds(self):
+        # test that the kinds are stored sorted
+        for k in KINDS:
+            with self.subTest(kind=k):
+                self.assertTrue(k == "".join(sorted(k)))
+
+    def test_long_kinds(self):
+        self.assertEqual(len(KINDS), len(LONG_KINDS))
+        # test that the long kinds are stored sorted
+        for k in LONG_KINDS:
+            if k == "small-caps":
+                continue
+            with self.subTest(kind=k):
+                self.assertTrue(k == "+".join(sorted(k.split("+"))))
+
+    def test_aliases(self):
+        # test that the aliases are stored sorted
+        for k in ALIASES:
+            with self.subTest(kind=k):
+                self.assertTrue(k == "+".join(sorted(k.split("+"))))
+
+    def test_parse_kind(self):
+        for k in KINDS:
+            with self.subTest(kind=k):
+                self.assertEqual(parse_kind(k), k)
+        for k, v in chain(LONG_KINDS.items(), ALIASES.items()):
+            with self.subTest(kind=k):
+                self.assertEqual(parse_kind(k), v)
+            k = k.replace(" ", "-")
+            for c in " _-+":
+                k2 = k.replace("-", c)
+                with self.subTest(kind=k2):
+                    self.assertEqual(parse_kind(k2), v)
+
+        # single-letter, shuffled:
+        for k in KINDS:
+            ok = k
+            k = list(k)
+            shuffle(k)
+            for c in " _-+":
+                k2 = c.join(k)
+                with self.subTest(kind=k2):
+                    self.assertEqual(parse_kind(k2), ok)
+            k = "".join(k)
+            with self.subTest(kind=k):
+                self.assertEqual(parse_kind(k), ok)
+
+        # long, mixed, shuffled:
+        for k, v in LONG_KINDS.items():
+            if " " not in k:
+                continue
+            k = k.split()
+            shuffle(k)
+            for c in " _-+":
+                k2 = c.join(k)
+                with self.subTest(kind=k2):
+                    self.assertEqual(parse_kind(k2), v)
+
+        # a few more, not all valid
+        self.assertEqual(parse_kind("i bold"), "bi")
+        self.assertEqual(parse_kind("bold i"), "bi")
+        self.assertEqual(parse_kind("italic b"), "bi")
+        self.assertEqual(parse_kind("b italic"), "bi")
+        self.assertEqual(parse_kind("script+fraktur"), "cf")
+        self.assertEqual(parse_kind("bi+sans"), "bis")
+        self.assertEqual(parse_kind("bold-i-double-struck"), "bdi")
+
+        # some bad ones but ignored
+        self.assertEqual(parse_kind("caps serif"), "k")
+        self.assertEqual(parse_kind("double small struck serif"), "d")
+
+    maxDiff = None

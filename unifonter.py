@@ -4,6 +4,7 @@
 
 import argparse
 import itertools
+import re
 import sys
 import unicodedata
 
@@ -28,17 +29,60 @@ KINDS = {
     "w": "Fullwidth",
 }
 
+_all_perms = {
+    "b",
+    "c",
+    "d",
+    "f",
+    "i",
+    "k",
+    "m",
+    "s",
+    "w",
+    "bc",
+    "bf",
+    "bi",
+    "bs",
+    "cb",
+    "fb",
+    "ib",
+    "is",
+    "sb",
+    "si",
+    "bis",
+    "bsi",
+    "ibs",
+    "isb",
+    "sbi",
+    "sib",
+}
 
-def _gen_k_help(dump=True):
-    styles = []
-    for (k, v) in sorted(KINDS.items()):
-        if len(k) == 1:
-            styles.append("%s (%s)" % (k, unifonter(v, k)))
-    out = ", ".join(styles)
-    if dump:
-        print(repr(out))
-    return out
+LONG_KINDS = {
+    "bold": "b",
+    "italic": "i",
+    "bold italic": "bi",
+    "sans": "s",
+    "bold sans": "bs",
+    "italic sans": "is",
+    "bold italic sans": "bis",
+    "script": "c",
+    "bold script": "bc",
+    "double-struck": "d",
+    "fraktur": "f",
+    "bold fraktur": "bf",
+    "small-caps": "k",
+    "mono": "m",
+    "wide": "w",
+}
+ALIASES = {
+    "double": "d",
+    "caps": "k",
+    "monospace": "m",
+    "fullwidth": "w",
+}
+IGNORE = ("serif", "struck", "small")
 
+_k_help = ", ".join("%s (%s)" % (v, k) for k, v in LONG_KINDS.items() if len(v) == 1)
 
 _k = {
     "b": (
@@ -132,27 +176,42 @@ def unifonter(arg, kind):
     return arg.translate(_k[kind])
 
 
+_extra_kind_help = """\
+For the long forms, separate with whatever is most convenient for you:
+spaces, dashes, pluses or underscores.
+Order does not matter ('bold fraktur' or 'fraktur bold', 'bis' or 'sib').
+You can shorten 'double-struck' to 'double', 'small-caps' to 'caps',
+'monospace' to 'mono' and 'fullwidth' to 'wide', in case the full names
+are just too verbose for you. You can also mix short and long forms.
+If you hate calling sans-serif 'sans', you can lengthen that one too.
+"""
+
+
 def demo(text, output):
-    print(" USE  TO GET", file=output)
-    if len(text) == 0:
-        for k in KINDS:
-            print(" %3s  %s" % (k, unifonter(KINDS[k], k)), file=output)
-    else:
-        for k in KINDS:
-            print(" %3s  %s" % (k, unifonter(" ".join(text), k)), file=output)
+    max_k = max(map(len, KINDS))
+    max_kind = max(map(len, LONG_KINDS))
+    tpl = "  %%%ds  %%%ds  %%s" % (-max_kind, -max_k)
+    print(tpl % ("USE", "OR", "TO GET"), file=output)
+    for kind, k in LONG_KINDS.items():
+        print(tpl % (kind, k, unifonter(text or KINDS[k], k)), file=output)
+    print(_extra_kind_help, end="", file=output)
 
 
-_k_help = (
-    "b (𝐁𝐨𝐥𝐝), "
-    "c (𝒮𝒸𝓇𝒾𝓅𝓉), "
-    "d (𝔻𝕠𝕦𝕓𝕝𝕖-𝕊𝕥𝕣𝕦𝕔𝕜), "
-    "f (𝔉𝔯𝔞𝔨𝔱𝔲𝔯), "
-    "i (𝐼𝑡𝑎𝑙𝑖𝑐), "
-    "k (Sᴍᴀʟʟ-Cᴀᴘꜱ), "
-    "m (𝙼𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎), "
-    "s (𝖲𝖺𝗇𝗌-𝖲𝖾𝗋𝗂𝖿), "
-    "w (Ｆｕｌｌｗｉｄｔｈ)"
-)
+_rx = re.compile(r"[ _+-]")
+
+
+def parse_kind(kind):
+    if len(kind) > 1:
+        kind = [k for k in _rx.split(kind) if k not in IGNORE]
+        for (i, k) in enumerate(kind):
+            if k in _all_perms:
+                continue
+            elif k in LONG_KINDS:
+                kind[i] = LONG_KINDS[k]
+            elif k in ALIASES:
+                kind[i] = ALIASES[k]
+        kind = "".join(sorted("".join(kind)))
+    return kind
 
 
 def main():
@@ -186,9 +245,10 @@ and then perhaps
     )
     parser.add_argument(
         "-k",
-        help="font style to use; one or more of of "
+        "--kind",
+        help="font style to use; one or more of either long style names or their single-letter identifiers: "
         + _k_help
-        + " (default: random; not all combinations will work; see -d)",
+        + " (default: random. Not all style combinations will work; see -d)",
         dest="kind",
     )
     parser.add_argument(
@@ -209,7 +269,7 @@ and then perhaps
     if args.demo:
         if args.input is not None:
             parser.error("currently demo mode only supports arguments, not -i")
-        demo(args.text, args.output)
+        demo(" ".join(args.text), args.output)
         sys.exit(0)
 
     if args.kind is None:
@@ -218,9 +278,7 @@ and then perhaps
         random.seed()
         kind = random.choice(list(KINDS))
     else:
-        kind = args.kind
-        if len(kind) > 1:
-            kind = "".join(sorted(kind))
+        kind = parse_kind(args.kind)
         if kind not in KINDS:
             parser.error("unknown kind {!r}".format(args.kind))
 
@@ -232,7 +290,7 @@ and then perhaps
                 print("reading from stdin", file=sys.stderr)
             it = sys.stdin
     else:
-        it = " ".join(args.text) + "\n"
+        it = [" ".join(args.text) + "\n"]
         if args.input is not None:
             it = itertools.chain(it, args.input)
 
