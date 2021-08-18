@@ -23,31 +23,35 @@ or
     $ unifonter Hello
     ℍ𝕖𝕝𝕝𝕠
 
-Several different styles are supported; use `-k` followed by a style
-combination you want, otherwise one is chosen at random.
+Several different styles are supported; use `--kind` (or `-k`) followed by a
+style combination you want, otherwise one is chosen at random.
 
 Supported styles can be seen via `unifonter -d`:
 
-  Use | To get
------:|:-----
-  `b` | 𝐁𝐨𝐥𝐝
-  `i` | 𝐼𝑡𝑎𝑙𝑖𝑐
- `bi` | 𝑩𝒐𝒍𝒅 𝑰𝒕𝒂𝒍𝒊𝒄
-  `s` | 𝖲𝖺𝗇𝗌-𝖲𝖾𝗋𝗂𝖿
- `bs` | 𝗦𝗮𝗻𝘀-𝗦𝗲𝗿𝗶𝗳 𝗕𝗼𝗹𝗱
- `is` | 𝘚𝘢𝘯𝘴-𝘚𝘦𝘳𝘪𝘧 𝘐𝘵𝘢𝘭𝘪𝘤
-`bis` | 𝙎𝙖𝙣𝙨-𝙎𝙚𝙧𝙞𝙛 𝘽𝙤𝙡𝙙 𝙄𝙩𝙖𝙡𝙞𝙘
-  `c` | 𝒮𝒸𝓇𝒾𝓅𝓉
- `bc` | 𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽
-  `d` | 𝔻𝕠𝕦𝕓𝕝𝕖-𝕊𝕥𝕣𝕦𝕔𝕜
-  `f` | 𝔉𝔯𝔞𝔨𝔱𝔲𝔯
- `bf` | 𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗
-  `k` | Sᴍᴀʟʟ-Cᴀᴘꜱ
-  `m` | 𝙼𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎
-  `w` | Ｆｕｌｌｗｉｄｔｈ
+  Use              | Or  | To get
+-------------------|-----|---------------------------
+  bold             | b   | 𝐁𝐨𝐥𝐝
+  italic           | i   | 𝐼𝑡𝑎𝑙𝑖𝑐
+  bold italic      | bi  | 𝑩𝒐𝒍𝒅 𝑰𝒕𝒂𝒍𝒊𝒄
+  sans             | s   | 𝖲𝖺𝗇𝗌-𝖲𝖾𝗋𝗂𝖿
+  bold sans        | bs  | 𝗦𝗮𝗻𝘀-𝗦𝗲𝗿𝗶𝗳 𝗕𝗼𝗹𝗱
+  italic sans      | is  | 𝘚𝘢𝘯𝘴-𝘚𝘦𝘳𝘪𝘧 𝘐𝘵𝘢𝘭𝘪𝘤
+  bold italic sans | bis | 𝙎𝙖𝙣𝙨-𝙎𝙚𝙧𝙞𝙛 𝘽𝙤𝙡𝙙 𝙄𝙩𝙖𝙡𝙞𝙘
+  script           | c   | 𝒮𝒸𝓇𝒾𝓅𝓉
+  bold script      | bc  | 𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽
+  double-struck    | d   | 𝔻𝕠𝕦𝕓𝕝𝕖-𝕊𝕥𝕣𝕦𝕔𝕜
+  fraktur          | f   | 𝔉𝔯𝔞𝔨𝔱𝔲𝔯
+  bold fraktur     | bf  | 𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗
+  small-caps       | k   | Sᴍᴀʟʟ-Cᴀᴘꜱ
+  mono             | m   | 𝙼𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎
+  wide             | w   | Ｆｕｌｌｗｉｄｔｈ
 
-but note the order of the letters doesn't matter (`-k bis` is the same
-as `-k sib`), so if you find that you think "fraktur bold" instead of
-"bold fraktur", just go with it.
+For the long forms, separate with whatever is most convenient for you:
+spaces, dashes, pluses or underscores.
+Order does not matter (`bold fraktur` or `fraktur bold`, `bis` or `sib`).
+You can shorten `double-struck` to `double`, `small-caps` to `caps`,
+`monospace` to `mono` and `fullwidth` to `wide`, in case the full names
+are just too verbose for you. You can also mix short and long forms.
+If you hate calling sans-serif `sans`, you can lengthen that one too.
 
 Some other options are supported; see the output of `-h`.
