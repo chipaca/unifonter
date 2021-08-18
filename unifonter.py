@@ -202,7 +202,7 @@ _rx = re.compile(r"[ _+-]")
 
 def parse_kind(kind):
     if len(kind) > 1:
-        kind = [k for k in _rx.split(kind) if not k in IGNORE]
+        kind = [k for k in _rx.split(kind) if k not in IGNORE]
         for (i, k) in enumerate(kind):
             if k in _all_perms:
                 continue

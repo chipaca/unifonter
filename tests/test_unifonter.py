@@ -8,7 +8,6 @@ from unifonter import (
     KINDS,
     LONG_KINDS,
     _extra_kind_help,
-    _k_help,
     _unidata_version,
     demo,
     parse_kind,
